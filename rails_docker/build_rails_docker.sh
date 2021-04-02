@@ -25,6 +25,15 @@ case ${AppName} in
     echo " ------------ START Rails new ------------"
     docker-compose run web rails new ${AppName} --force --no-deps --database=postgresql 
     echo " ------------ END Rails new ------------"
+
+    echo " ------------ START DB create ------------"
+    sed -i -e 's/#host: localhost/host: db/' ${AppName}/config/database.yml
+    SWAP_DB_FILE=${AppName}/config/database.yml-e
+    if [[ -e $SWAP_DB_FILE ]]; then
+       rm $SWAP_DB_FILE
+    fi
+     docker-compose run web rails db:create
+    echo " ------------ END DB create ------------"
 esac
 
 # annotate 追加
