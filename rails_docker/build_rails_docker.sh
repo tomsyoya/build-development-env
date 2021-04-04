@@ -9,10 +9,6 @@ echo 'gem "rails"' >> Gemfile
 # Gemfile.lock生成
 touch Gemfile.lock
 
-echo " ------------ START Build 1------------"
-docker-compose run web bundle install
-echo " ------------ END Build 1------------"
-
 # アプリの生成
 echo "アプリのビルドを開始します。"
 
@@ -21,9 +17,12 @@ echo " ------------ START Rails new ------------"
 docker-compose run web rails new . --force --no-deps --database=postgresql 
 echo " ------------ END Rails new ------------"
 
-echo " ------------ START Build 2------------"
+# annotate 追加
+echo 'gem "annotate"' >> Gemfile
+
+echo " ------------ START APP BUILD ------------"
 docker-compose build
-echo " ------------ END Build 2------------"
+echo " ------------ END APP BUILD ------------"
 
 echo " ------------ START DB create ------------"
 # develop環境にDB接続情報を設定
@@ -40,9 +39,6 @@ fi
 docker-compose run web rails db:create
 echo " ------------ END DB create ------------"
 
-# annotate 追加
-echo 'gem "annotate"' >> Gemfile
+# 当シェルをgit管理から除外
+echo "build_rails_docker.sh" >> .gitignore
 
-echo " ------------ START Build 3------------"
-docker-compose build
-echo " ------------ END Build 3------------"
