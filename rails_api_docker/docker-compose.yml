@@ -7,3 +7,17 @@ services:
       - .:/myapp
     ports:
       - "3000:3000"
+    depends_on:
+      - db
+    environment:
+      - "DATABASE_USER=root"
+      - "DATABASE_PASSWORD=password"
+  db:
+    image: mysql:5.7
+    ports:
+      - "3306:3306"
+    volumes:
+      - "./mysql/db-data/:/var/lib/mysql" # データ永続化
+      - "./mysql/my.cnf:/etc/mysql/conf.d/my.cnf" # 日本語をデータとして使うために必要
+    environment:
+      MYSQL_ROOT_PASSWORD: password
